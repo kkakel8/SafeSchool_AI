@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeSchool AI - Deteksi Konflik & Tawuran</title>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background-color: #0f172a; color: #f8fafc; padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
+        .phone-container { width: 100%; max-width: 450px; background: #1e293b; border-radius: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); padding: 20px; display: flex; flex-direction: column; border: 1px solid #334155; }
+        header { text-align: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #334155; }
+        header h1 { font-size: 1.7rem; color: #38bdf8; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        header p { font-size: 0.85rem; color: #94a3b8; margin-top: 5px; }
+        .scan-section { background: #0f172a; padding: 20px; border-radius: 15px; border: 1px solid #475569; margin-bottom: 20px; }
+        label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; color: #cbd5e1; }
+        textarea { width: 100%; height: 100px; padding: 12px; background: #1e293b; color: white; border: 1px solid #475569; border-radius: 10px; font-size: 0.95rem; resize: none; outline: none; }
+        textarea:focus { border-color: #38bdf8; }
+        button { width: 100%; padding: 14px; background: #0284c7; color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; margin-top: 10px; }
+        button:hover { background: #0369a1; }
+        .result-section { margin-top: 10px; display: none; padding: 15px; border-radius: 12px; font-weight: 600; text-align: center; }
+        .alert-danger { background: #7f1d1d; color: #fca5a5; border: 1px solid #b91c1c; }
+        .alert-success { background: #14532d; color: #86efac; border: 1px solid #15803d; }
+        .keyword-badge { display: inline-block; padding: 2px 8px; background: #ef4444; color: white; border-radius: 5px; font-size: 0.85rem; margin-top: 5px; }
+        .edu-section { margin-top: 20px; background: #1e293b; padding: 15px; border-radius: 12px; border-left: 4px solid #38bdf8; }
+        .edu-section h3 { font-size: 1rem; color: #38bdf8; margin-bottom: 5px; }
+        .edu-section p { font-size: 0.8rem; color: #94a3b8; line-height: 1.4; }
+    </style>
+</head>
+<body>
+
+<div class="phone-container">
+    <header>
+        <h1><i data-lucide="shield-alert"></i> SafeSchool AI</h1>
+        <p>Sistem Deteksi Dini Provokasi & Pemicu Tawuran</p>
+    </header>
+
+    <div class="scan-section">
+        <label>Tempel Chat / Teks Mencurigakan:</label>
+        <textarea id="textInput" placeholder="Contoh: Info-info besok bawa celurit kumpul di pertigaan..."></textarea>
+        <button onclick="analisisTeks()"><i data-lucide="search-code"></i> Analisis Teks AI</button>
+    </div>
+
+    <div id="resultBox" class="result-section"></div>
+
+    <div class="edu-section">
+        <h3><i data-lucide="info" style="display:inline; width:16px;"></i> Cara Kerja Sistem:</h3>
+        <p>AI akan memindai kata kunci berbahaya (senjata tajam, ajakan kekerasan, lokasi bentrokan) yang sering digunakan provokator untuk memicu tawuran pelajar.</p>
+    </div>
+</div>
+
+<script>
+    function analisisTeks() {
+        const input = document.getElementById('textInput').value.trim();
+        const resultBox = document.getElementById('resultBox');
+
+        if (!input) {
+            alert('Masukkan teks atau chat yang ingin diperiksa terlebih dahulu!');
+            return;
+        }
+
+        // Daftar kata kunci sensitif pemicu konflik/tawuran
+        const kataBahaya = ['celurit', 'tawuran', 'bacok', 'sajam', 'gir', 'parang', 'serang', 'hajar', 'kumpul', 'bawa alat', 'tunggu di', 'ribut', 'provokasi'];
+        
+        const teksSaring = input.toLowerCase();
+        // Mencari kata apa saja yang cocok
+        const kataDitemukan = kataBahaya.filter(kata => teksSaring.includes(kata));
+
+        resultBox.style.display = 'block';
+
+        if (kataDitemukan.length > 0) {
+            // Jika terdeteksi kata berbahaya
+            resultBox.className = 'result-section alert-danger';
+            resultBox.innerHTML = `
+                <p>⚠️ TERDETEKSI INDIKASI KONFLIK / TAWURAN!</p>
+                <div style="font-size: 0.85rem; font-weight: normal; margin-top: 8px;">
+                    Kata pemicu ditemukan: <br>
+                    ${kataDitemukan.map(k => `<span class="keyword-badge">${k}</span>`).join(' ')}
+                </div>
+            `;
+        } else {
+            // Jika teks aman
+            resultBox.className = 'result-section alert-success';
+            resultBox.innerHTML = `<p>✅ Teks Aman. Tidak ada indikasi provokasi atau senjata tajam.</p>`;
+        }
+        lucide.createIcons();
+    }
+    
+    // Aktifkan icon pertama kali
+    lucide.createIcons();
+</script>
+</body>
+</html>
